@@ -24,18 +24,19 @@ from megatron.tokenizer import build_tokenizer
 from megatron.data import indexed_dataset
 
 
-# https://stackoverflow.com/questions/33139531/preserve-empty-lines-with-nltks-punkt-tokenizer
-class CustomLanguageVars(nltk.tokenize.punkt.PunktLanguageVars):
+if nltk_available:
+    # https://stackoverflow.com/questions/33139531/preserve-empty-lines-with-nltks-punkt-tokenizer
+    class CustomLanguageVars(nltk.tokenize.punkt.PunktLanguageVars):
 
-    _period_context_fmt = r"""
-        \S*                          # some word material
-        %(SentEndChars)s             # a potential sentence ending
-        \s*                       #  <-- THIS is what I changed
-        (?=(?P<after_tok>
-            %(NonWord)s              # either other punctuation
-            |
-            (?P<next_tok>\S+)     #  <-- Normally you would have \s+ here
-        ))"""
+        _period_context_fmt = r"""
+            \S*                          # some word material
+            %(SentEndChars)s             # a potential sentence ending
+            \s*                       #  <-- THIS is what I changed
+             (?=(?P<after_tok>
+                %(NonWord)s              # either other punctuation
+                 |
+                 (?P<next_tok>\S+)     #  <-- Normally you would have \s+ here
+            ))"""
 
 class IdentitySplitter(object):
     def tokenize(self, *text):
